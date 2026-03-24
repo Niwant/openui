@@ -1,0 +1,40 @@
+{
+  "name": "@openuidev/react-email",
+  "version": "0.1.0",
+  "description": "React Email components for OpenUI \u2014 44 email building blocks with defineComponent",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsc -p tsconfig.build.json --watch",
+    "lint": "eslint",
+    "lint:check": "eslint ./src",
+    "lint:fix": "eslint ./src --fix",
+    "format:fix": "prettier --write ./src",
+    "format:check": "prettier --check ./src",
+    "ci": "pnpm run lint:check && pnpm run format:check"
+  },
+  "dependencies": {
+    "@react-email/components": "^0.0.41",
+    "zod": "^4.3.6"
+  },
+  "peerDependencies": {
+    "@openuidev/react-lang": "workspace:*",
+    "react": ">=19.0.0",
+    "react-dom": ">=19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "typescript": "^5"
+  }
+}
