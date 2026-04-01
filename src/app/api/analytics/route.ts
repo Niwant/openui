@@ -7,7 +7,9 @@ import {
   buildFallbackAnalyticsUi,
 } from "@/lib/analytics";
 
-const client = new OpenAI();
+function getClient() {
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+}
 
 function extractTextContent(content: unknown) {
   if (typeof content === "string") {
@@ -52,6 +54,7 @@ function sanitizeOpenUiOutput(output: string) {
 
 export async function POST() {
   try {
+    const client = getClient();
     const completion = await client.chat.completions.create({
       model: "gpt-5.2",
       temperature: 0.3,

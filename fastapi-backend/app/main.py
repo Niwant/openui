@@ -2,11 +2,13 @@ from __future__ import annotations
 
 import os
 import re
+import json
 from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from openai import OpenAI
 from dotenv import load_dotenv
 
@@ -79,38 +81,83 @@ def sanitize_openui_output(output: str) -> str:
     return without_fences[root_index:].strip()
 
 
+def build_sse_event(event: str, data: dict[str, object]) -> str:
+    return f"event: {event}\ndata: {json.dumps(data)}\n\n"
+
+
 @app.get("/health")
 def healthcheck() -> dict[str, str]:
     return {"status": "ok"}
 
 
-@app.post("/api/analytics/generate", response_model=GenerateAnalyticsResponse)
+@app.post("/api/analytics/generate")
 def generate_analytics(
     _: GenerateAnalyticsRequest | None = None,
-) -> GenerateAnalyticsResponse:
-    try:
-        client = get_openai_client()
-        completion = client.chat.completions.create(
-            model=os.getenv("OPENAI_MODEL", "gpt-5.2"),
-            temperature=0.3,
-            messages=[
-                {"role": "system", "content": ANALYTICS_SYSTEM_PROMPT},
-                {"role": "user", "content": build_analytics_user_prompt()},
-            ],
-        )
+) -> StreamingResponse:
+    generated_at = datetime.now(timezone.utc).isoformat()
 
-        raw_output = extract_text_content(completion.choices[0].message.content)
-        output = sanitize_openui_output(raw_output)
+    def event_stream():
+        full_output = ""
 
-        return GenerateAnalyticsResponse(
-            generatedAt=datetime.now(timezone.utc).isoformat(),
-            organization=ANALYTICS_SNAPSHOT["organization"],
-            periodLabel=ANALYTICS_SNAPSHOT["periodLabel"],
-            output=output
-            if output.startswith("root =")
-            else build_fallback_analytics_ui(),
-        )
-    except HTTPException:
-        raise
-    except Exception as exc:  # pragma: no cover - runtime API failures
-        raise HTTPException(status_code=500, detail=str(exc)) from exc
+        try:
+            client = get_openai_client()
+            yield build_sse_event(
+                "metadata",
+                {
+                    "generatedAt": generated_at,
+                    "organization": ANALYTICS_SNAPSHOT["organization"],
+                    "periodLabel": ANALYTICS_SNAPSHOT["periodLabel"],
+                },
+            )
+
+            stream = client.chat.completions.create(
+                model=os.getenv("OPENAI_MODEL", "gpt-5.2"),
+                temperature=0.3,
+                stream=True,
+                messages=[
+                    {"role": "system", "content": ANALYTICS_SYSTEM_PROMPT},
+                    {"role": "user", "content": build_analytics_user_prompt()},
+                ],
+            )
+
+            for chunk in stream:
+                if not chunk.choices:
+                    continue
+
+                delta = chunk.choices[0].delta
+                content = delta.content if delta else None
+
+                if not content:
+                    continue
+
+                full_output += content
+                yield build_sse_event("chunk", {"delta": content})
+
+            sanitized_output = sanitize_openui_output(full_output)
+            final_output = (
+                sanitized_output
+                if sanitized_output.startswith("root =")
+                else build_fallback_analytics_ui()
+            )
+
+            payload = GenerateAnalyticsResponse(
+                generatedAt=generated_at,
+                organization=ANALYTICS_SNAPSHOT["organization"],
+                periodLabel=ANALYTICS_SNAPSHOT["periodLabel"],
+                output=final_output,
+            )
+            yield build_sse_event("complete", payload.model_dump())
+        except HTTPException as exc:
+            yield build_sse_event("error", {"message": str(exc.detail)})
+        except Exception as exc:  # pragma: no cover - runtime API failures
+            yield build_sse_event("error", {"message": str(exc)})
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no",
+        },
+    )

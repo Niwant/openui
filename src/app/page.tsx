@@ -7,6 +7,8 @@ import { useState } from "react";
 import { Renderer } from "@openuidev/react-lang";
 import { openuiLibrary } from "@openuidev/react-ui/genui-lib";
 
+import { consumeAnalyticsResponse } from "@/lib/consumeAnalyticsResponse";
+
 const analyticsApiUrl =
   process.env.NEXT_PUBLIC_ANALYTICS_API_URL ?? "/api/analytics";
 
@@ -19,6 +21,8 @@ export default function Home() {
   async function handleGenerateAnalytics() {
     setIsLoading(true);
     setError(null);
+    setResponse(null);
+    setGeneratedAt(null);
 
     try {
       const result = await fetch(analyticsApiUrl, {
@@ -27,21 +31,18 @@ export default function Home() {
         body: JSON.stringify({}),
       });
 
-      const payload = (await result.json()) as {
-        error?: string;
-        detail?: string;
-        generatedAt?: string;
-        output?: string;
-      };
-
-      if (!result.ok || !payload.output) {
-        throw new Error(
-          payload.error ?? payload.detail ?? "Analytics generation failed.",
-        );
-      }
-
-      setResponse(payload.output);
-      setGeneratedAt(payload.generatedAt ?? null);
+      await consumeAnalyticsResponse(result, {
+        onMetadata(payload) {
+          setGeneratedAt(payload.generatedAt ?? null);
+        },
+        onChunk(delta) {
+          setResponse((current) => `${current ?? ""}${delta}`);
+        },
+        onComplete(payload) {
+          setResponse(payload.output ?? null);
+          setGeneratedAt(payload.generatedAt ?? null);
+        },
+      });
     } catch (requestError) {
       setError(
         requestError instanceof Error
@@ -134,7 +135,11 @@ export default function Home() {
 
           {response ? (
             <div className="mt-6 rounded-[1.75rem] border border-slate-200 bg-slate-50/80 p-5 sm:p-6">
-              <Renderer response={response} library={openuiLibrary} />
+              <Renderer
+                response={response}
+                library={openuiLibrary}
+                isStreaming={isLoading}
+              />
             </div>
           ) : (
             <div className="mt-6 rounded-[1.75rem] border border-dashed border-slate-300 bg-[linear-gradient(180deg,_rgba(255,255,255,0.9),_rgba(248,250,252,0.9))] px-6 py-12 text-center text-slate-500">

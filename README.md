@@ -2,7 +2,7 @@ This project now demonstrates a one-shot OpenUI analytics flow:
 
 - a frontend button triggers analytics generation
 - the backend owns the prompt and OpenAI key
-- the frontend renders returned OpenUI output as a dashboard
+- the frontend progressively renders streamed OpenUI output as a dashboard
 
 ## Frontend
 
@@ -50,9 +50,10 @@ Available endpoints:
 The FastAPI app includes:
 
 - backend-owned analytics prompt generation
-- OpenAI call execution with the server-side API key
+- streamed OpenAI execution with the server-side API key
 - CORS configuration for local frontend origins
-- deterministic fallback OpenUI output if the model response is malformed
+- SSE delivery so the frontend can progressively render the dashboard
+- deterministic fallback OpenUI output if the final model response is malformed
 
 ## Learn More
 
