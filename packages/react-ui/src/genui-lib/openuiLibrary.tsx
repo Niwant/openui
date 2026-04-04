@@ -113,14 +113,30 @@ export const openuiComponentGroups: ComponentGroup[] = [
       "HorizontalBarChart",
       "Series",
     ],
+    notes: [
+      "- BarChart, LineChart, AreaChart, and HorizontalBarChart keep their original required args first: labels, series, then optional variant.",
+      "- After the required args, you can optionally set theme, legend, animated, showGrid, xLabel, and yLabel.",
+      "- RadarChart takes labels and series first, then optional theme, legend, animated, and showGrid.",
+      "- Keep every Series values array the same length as labels.",
+      "- Use animated=true only when the user explicitly asks for animation or motion.",
+    ],
   },
   {
     name: "Charts (1D)",
     components: ["PieChart", "RadialChart", "SingleStackedBarChart", "Slice"],
+    notes: [
+      '- PieChart takes slices first, then optional variant, theme, legend, animated, and format. Use format="percentage" for part-to-whole percentages.',
+      "- RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.",
+      "- SingleStackedBarChart takes slices first, then optional theme, legend, and animated.",
+    ],
   },
   {
     name: "Charts (Scatter)",
     components: ["ScatterChart", "ScatterSeries", "Point"],
+    notes: [
+      "- ScatterChart takes datasets first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.",
+      "- Use Point(x, y, z?) and include z only when point size should encode a third metric.",
+    ],
   },
   {
     name: "Forms",
@@ -170,15 +186,24 @@ tbl = Table(cols, rows)
 cols = [Col("Language", "string"), Col("Users (M)", "number"), Col("Year", "number")]
 rows = [["Python", 15.7, 1991], ["JavaScript", 14.2, 1995], ["Java", 12.1, 1995], ["TypeScript", 8.5, 2012], ["Go", 5.2, 2009]]`,
 
-  `Example 2 — Bar chart:
+  `Example 2 — Bar chart with chart controls:
 root = Stack([title, chart])
 title = TextContent("Q4 Revenue", "large-heavy")
-chart = BarChart(labels, [s1, s2], "grouped")
+chart = BarChart(labels, [s1, s2], "grouped", "sunset", false, false, true, "Month", "Revenue ($K)")
 labels = ["Oct", "Nov", "Dec"]
 s1 = Series("Product A", [120, 150, 180])
 s2 = Series("Product B", [90, 110, 140])`,
 
-  `Example 3 — Form with validation:
+  `Example 3 — Donut chart with percentage formatting:
+root = Stack([title, chart])
+title = TextContent("Market Share", "large-heavy")
+chart = PieChart(slices, "donut", "emerald", true, false, "percentage")
+slices = [share1, share2, share3]
+share1 = Slice("Alpha", 42)
+share2 = Slice("Beta", 33)
+share3 = Slice("Gamma", 25)`,
+
+  `Example 4 — Form with validation:
 root = Stack([title, form])
 title = TextContent("Contact Us", "large-heavy")
 form = Form("contact", btns, [nameField, emailField, countryField, msgField])
@@ -189,7 +214,7 @@ msgField = FormControl("Message", TextArea("message", "Tell us more...", 4, { re
 countryOpts = [SelectItem("us", "United States"), SelectItem("uk", "United Kingdom"), SelectItem("de", "Germany")]
 btns = Buttons([Button("Submit", { type: "continue_conversation" }, "primary"), Button("Cancel", { type: "continue_conversation" }, "secondary")])`,
 
-  `Example 4 — Tabs with mixed content:
+  `Example 5 — Tabs with mixed content:
 root = Stack([title, tabs])
 title = TextContent("React vs Vue", "large-heavy")
 tabs = Tabs([tabReact, tabVue])
@@ -204,6 +229,13 @@ export const openuiAdditionalRules: string[] = [
   "For forms, define one FormControl reference per field so controls can stream progressively.",
   "For forms, always provide the second Form argument with Buttons(...) actions: Form(name, buttons, fields).",
   "Never nest Form inside Form.",
+  "For charts, keep required data arguments first and add visual controls only after them.",
+  'Use theme from: "ocean", "orchid", "emerald", "spectrum", "sunset", "vivid".',
+  "Use legend=false only when the user asks to hide the legend or a single-series chart is cleaner without it.",
+  "Use animated=true only when the user explicitly asks for animation or motion.",
+  'Use format="percentage" for PieChart and RadialChart when the user asks for shares, composition, or percentages.',
+  "If you set a later optional chart argument, use undefined placeholders to skip earlier optional args you do not need.",
+  "For BarChart, LineChart, AreaChart, and HorizontalBarChart, every Series values array must match the labels length exactly.",
 ];
 
 export const openuiPromptOptions: PromptOptions = {

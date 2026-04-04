@@ -6,19 +6,20 @@ import { z } from "zod";
 import { HorizontalBarChart as HorizontalBarChartComponent } from "../../components/Charts";
 import { buildChartData, hasAllProps } from "../helpers";
 import { SeriesSchema } from "./Series";
+import { cartesianChartAppearanceShape, getCartesianChartProps } from "./shared";
 
 export const HorizontalBarChartSchema = z.object({
   labels: z.array(z.string()),
   series: z.array(SeriesSchema),
   variant: z.enum(["grouped", "stacked"]).optional(),
-  xLabel: z.string().optional(),
-  yLabel: z.string().optional(),
+  ...cartesianChartAppearanceShape,
 });
 
 export const HorizontalBarChart = defineComponent({
   name: "HorizontalBarChart",
   props: HorizontalBarChartSchema,
-  description: "Horizontal bars; prefer when category labels are long or for ranked lists",
+  description:
+    "Horizontal bars for ranked lists or long labels; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel",
   component: ({ props }) => {
     if (!hasAllProps(props as Record<string, unknown>, "labels", "series")) return null;
     const data = buildChartData(props.labels, props.series);
@@ -27,9 +28,7 @@ export const HorizontalBarChart = defineComponent({
       data,
       categoryKey: "category",
       variant: props.variant as "grouped" | "stacked" | undefined,
-      xAxisLabel: props.xLabel,
-      yAxisLabel: props.yLabel,
-      isAnimationActive: false,
+      ...getCartesianChartProps(props),
     });
   },
 });

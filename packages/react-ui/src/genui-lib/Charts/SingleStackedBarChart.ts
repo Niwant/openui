@@ -6,16 +6,18 @@ import { z } from "zod";
 import { SingleStackedBar as SingleStackedBarChartComponent } from "../../components/Charts";
 import { buildSliceData, hasAllProps } from "../helpers";
 import { SliceSchema } from "./Slice";
+import { baseChartAppearanceShape, getSingleStackedBarProps } from "./shared";
 
 export const SingleStackedBarChartSchema = z.object({
   slices: z.array(SliceSchema),
+  ...baseChartAppearanceShape,
 });
 
 export const SingleStackedBarChart = defineComponent({
   name: "SingleStackedBarChart",
   props: SingleStackedBarChartSchema,
   description:
-    "Single horizontal stacked bar; use for showing part-to-whole proportions in one row",
+    "Single horizontal stacked bar for one-row part-to-whole proportions; after slices you can set theme, legend, and animated",
   component: ({ props }) => {
     if (!hasAllProps(props as Record<string, unknown>, "slices")) return null;
     const data = buildSliceData((props as any).slices);
@@ -24,6 +26,7 @@ export const SingleStackedBarChart = defineComponent({
       data,
       categoryKey: "category",
       dataKey: "value",
+      ...getSingleStackedBarProps(props),
     });
   },
 });

@@ -34,23 +34,33 @@ Table(columns: Col[], rows: (string | number | boolean)[][]) — Data table
 Col(label: string, type?: "string" | "number" | "action") — Column definition
 
 ### Charts (2D)
-BarChart(labels: string[], series: Series[], variant?: "grouped" | "stacked", xLabel?: string, yLabel?: string) — Vertical bars; use for comparing values across categories with one or more series
-LineChart(labels: string[], series: Series[], variant?: "linear" | "natural" | "step", xLabel?: string, yLabel?: string) — Lines over categories; use for trends and continuous data over time
-AreaChart(labels: string[], series: Series[], variant?: "linear" | "natural" | "step", xLabel?: string, yLabel?: string) — Filled area under lines; use for cumulative totals or volume trends over time
-RadarChart(labels: string[], series: Series[]) — Spider/web chart; use for comparing multiple variables across one or more entities
-HorizontalBarChart(labels: string[], series: Series[], variant?: "grouped" | "stacked", xLabel?: string, yLabel?: string) — Horizontal bars; prefer when category labels are long or for ranked lists
+BarChart(labels: string[], series: Series[], variant?: "grouped" | "stacked", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Vertical bars for comparing categories; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel
+LineChart(labels: string[], series: Series[], variant?: "linear" | "natural" | "step", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Lines over categories for trends over time; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel
+AreaChart(labels: string[], series: Series[], variant?: "linear" | "natural" | "step", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Filled area chart for cumulative totals or volume trends; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel
+RadarChart(labels: string[], series: Series[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean) — Spider/web chart for comparing multiple variables; after labels and series you can set theme, legend, animated, and showGrid
+HorizontalBarChart(labels: string[], series: Series[], variant?: "grouped" | "stacked", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Horizontal bars for ranked lists or long labels; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel
 Series(category: string, values: number[]) — One data series
+- BarChart, LineChart, AreaChart, and HorizontalBarChart keep their original required args first: labels, series, then optional variant.
+- After the required args, you can optionally set theme, legend, animated, showGrid, xLabel, and yLabel.
+- RadarChart takes labels and series first, then optional theme, legend, animated, and showGrid.
+- Keep every Series values array the same length as labels.
+- Use animated=true only when the user explicitly asks for animation or motion.
 
 ### Charts (1D)
-PieChart(slices: Slice[], variant?: "pie" | "donut") — Circular slices showing part-to-whole proportions; supports pie and donut variants
-RadialChart(slices: Slice[]) — Radial bars showing proportional distribution across named segments
-SingleStackedBarChart(slices: Slice[]) — Single horizontal stacked bar; use for showing part-to-whole proportions in one row
+PieChart(slices: Slice[], variant?: "pie" | "donut", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, format?: "number" | "percentage") — Circular slices for part-to-whole comparisons; after slices and optional variant you can set theme, legend, animated, and format as "number" or "percentage"
+RadialChart(slices: Slice[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, format?: "number" | "percentage", showGrid?: boolean) — Radial bars for proportional distribution across named segments; after slices you can set theme, legend, animated, format as "number" or "percentage", and showGrid
+SingleStackedBarChart(slices: Slice[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean) — Single horizontal stacked bar for one-row part-to-whole proportions; after slices you can set theme, legend, and animated
 Slice(category: string, value: number) — One slice with label and numeric value
+- PieChart takes slices first, then optional variant, theme, legend, animated, and format. Use format="percentage" for part-to-whole percentages.
+- RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.
+- SingleStackedBarChart takes slices first, then optional theme, legend, and animated.
 
 ### Charts (Scatter)
-ScatterChart(datasets: ScatterSeries[], xLabel?: string, yLabel?: string) — X/Y scatter plot; use for correlations, distributions, and clustering
+ScatterChart(datasets: ScatterSeries[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — X/Y scatter plot for correlations and clustering; after datasets you can set theme, legend, animated, showGrid, xLabel, and yLabel
 ScatterSeries(name: string, points: Point[]) — Named dataset
 Point(x: number, y: number, z?: number) — Data point with numeric coordinates
+- ScatterChart takes datasets first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.
+- Use Point(x, y, z?) and include z only when point size should encode a third metric.
 
 ### Forms
 Form(name: string, buttons: Buttons, fields) — Form container with fields and explicit action buttons
@@ -179,6 +189,26 @@ emailField = FormControl("Email", Input("email", "you@example.com", "email", { r
 msgField = FormControl("Message", TextArea("message", "Tell us more...", 4, { required: true, minLength: 10 }))
 btns = Buttons([Button("Submit", { type: "continue_conversation" }, "primary")])
 
+Example 5 — Bar chart with chart controls:
+root = Card([title, chart, followUps])
+title = TextContent("Q4 Revenue", "large-heavy")
+chart = BarChart(labels, [s1, s2], "grouped", "sunset", false, false, true, "Month", "Revenue ($K)")
+labels = ["Oct", "Nov", "Dec"]
+s1 = Series("Product A", [120, 150, 180])
+s2 = Series("Product B", [90, 110, 140])
+followUps = FollowUpBlock([fu1, fu2])
+fu1 = FollowUpItem("Compare this with last quarter")
+fu2 = FollowUpItem("Turn this into a donut chart")
+
+Example 6 — Donut chart with percentage formatting:
+root = Card([title, chart])
+title = TextContent("Market Share", "large-heavy")
+chart = PieChart(slices, "donut", "emerald", true, false, "percentage")
+slices = [share1, share2, share3]
+share1 = Slice("Alpha", 42)
+share2 = Slice("Beta", 33)
+share3 = Slice("Gamma", 25)
+
 ## Important Rules
 - ALWAYS start with root = Card(...)
 - Write statements in TOP-DOWN order: root → components → data (leverages hoisting for progressive streaming)
@@ -200,3 +230,10 @@ btns = Buttons([Button("Submit", { type: "continue_conversation" }, "primary")])
 - For forms, define one FormControl reference per field so controls can stream progressively.
 - For forms, always provide the second Form argument with Buttons(...) actions: Form(name, buttons, fields).
 - Never nest Form inside Form.
+- For charts, keep required data arguments first and add visual controls only after them.
+- Use theme from: "ocean", "orchid", "emerald", "spectrum", "sunset", "vivid".
+- Use legend=false only when the user asks to hide the legend or a single-series chart is cleaner without it.
+- Use animated=true only when the user explicitly asks for animation or motion.
+- Use format="percentage" for PieChart and RadialChart when the user asks for shares, composition, or percentages.
+- If you set a later optional chart argument, use undefined placeholders to skip earlier optional args you do not need.
+- For BarChart, LineChart, AreaChart, and HorizontalBarChart, every Series values array must match the labels length exactly.

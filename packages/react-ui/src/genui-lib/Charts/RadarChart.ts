@@ -6,16 +6,19 @@ import { z } from "zod";
 import { RadarChart as RadarChartComponent } from "../../components/Charts";
 import { buildChartData, hasAllProps } from "../helpers";
 import { SeriesSchema } from "./Series";
+import { getGridChartProps, gridChartAppearanceShape } from "./shared";
 
 export const RadarChartSchema = z.object({
   labels: z.array(z.string()),
   series: z.array(SeriesSchema),
+  ...gridChartAppearanceShape,
 });
 
 export const RadarChart = defineComponent({
   name: "RadarChart",
   props: RadarChartSchema,
-  description: "Spider/web chart; use for comparing multiple variables across one or more entities",
+  description:
+    "Spider/web chart for comparing multiple variables; after labels and series you can set theme, legend, animated, and showGrid",
   component: ({ props }) => {
     if (!hasAllProps(props as Record<string, unknown>, "labels", "series")) return null;
     const data = buildChartData(props.labels, props.series);
@@ -23,7 +26,7 @@ export const RadarChart = defineComponent({
     return React.createElement(RadarChartComponent, {
       data,
       categoryKey: "category",
-      isAnimationActive: false,
+      ...getGridChartProps(props),
     });
   },
 });

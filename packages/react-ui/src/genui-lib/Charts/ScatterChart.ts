@@ -6,11 +6,11 @@ import { z } from "zod";
 import { ScatterChart as ScatterChartComponent } from "../../components/Charts";
 import { asArray, hasAllProps } from "../helpers";
 import { ScatterSeriesSchema } from "./ScatterSeries";
+import { cartesianChartAppearanceShape, getCartesianChartProps } from "./shared";
 
 export const ScatterChartSchema = z.object({
   datasets: z.array(ScatterSeriesSchema),
-  xLabel: z.string().optional(),
-  yLabel: z.string().optional(),
+  ...cartesianChartAppearanceShape,
 });
 
 const unwrap = (node: any) => (node?.type === "element" ? node.props : node);
@@ -18,7 +18,8 @@ const unwrap = (node: any) => (node?.type === "element" ? node.props : node);
 export const ScatterChart = defineComponent({
   name: "ScatterChart",
   props: ScatterChartSchema,
-  description: "X/Y scatter plot; use for correlations, distributions, and clustering",
+  description:
+    "X/Y scatter plot for correlations and clustering; after datasets you can set theme, legend, animated, showGrid, xLabel, and yLabel",
   component: ({ props }) => {
     if (!hasAllProps(props as Record<string, unknown>, "datasets")) return null;
     const rawDatasets = asArray((props as any).datasets);
@@ -42,7 +43,7 @@ export const ScatterChart = defineComponent({
       data,
       xAxisDataKey: "x",
       yAxisDataKey: "y",
-      isAnimationActive: false,
+      ...getCartesianChartProps(props),
     });
   },
 });
