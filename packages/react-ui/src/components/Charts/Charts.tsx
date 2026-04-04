@@ -44,7 +44,7 @@ export type ChartConfig = {
  * Data structure for chart export (e.g., to PPTX)
  */
 export type ExportChartData = {
-  type: "line" | "bar" | "area" | "pie" | "radar" | "scatter";
+  type: "line" | "bar" | "area" | "pie" | "radar" | "scatter" | "treemap";
   data: {
     name: string;
     labels?: string[];

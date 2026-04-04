@@ -16,6 +16,15 @@ interface SideBarTooltipContextType {
   setIsSideBarTooltipOpen: (isOpen: boolean) => void;
 }
 
+const noop = () => {};
+
+const defaultSideBarTooltipContext: SideBarTooltipContextType = {
+  data: undefined,
+  isSideBarTooltipOpen: false,
+  setData: noop,
+  setIsSideBarTooltipOpen: noop,
+};
+
 const SideBarTooltipContext = createContext<SideBarTooltipContextType | undefined>(undefined);
 
 interface SideBarTooltipProviderProps {
@@ -46,7 +55,7 @@ export const SideBarTooltipProvider: React.FC<SideBarTooltipProviderProps> = ({
 export const useSideBarTooltip = (): SideBarTooltipContextType => {
   const context = useContext(SideBarTooltipContext);
   if (context === undefined) {
-    throw new Error("useSideBarTooltip must be used within a SideBarTooltipProvider");
+    return defaultSideBarTooltipContext;
   }
   return context;
 };

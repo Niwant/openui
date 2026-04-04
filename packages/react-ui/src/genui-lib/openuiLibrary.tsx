@@ -19,6 +19,11 @@ import { TextContent } from "./TextContent";
 import {
   AreaChartCondensed,
   BarChartCondensed,
+  BubbleChart,
+  BubblePoint,
+  BubbleSeries,
+  ComboChart,
+  ComboSeries,
   HorizontalBarChart,
   LineChartCondensed,
   PieChart,
@@ -30,6 +35,8 @@ import {
   Series,
   SingleStackedBarChart,
   Slice,
+  TreemapChart,
+  TreemapItem,
 } from "./Charts";
 
 // Forms
@@ -111,31 +118,52 @@ export const openuiComponentGroups: ComponentGroup[] = [
       "AreaChart",
       "RadarChart",
       "HorizontalBarChart",
+      "ComboChart",
       "Series",
+      "ComboSeries",
     ],
     notes: [
       "- BarChart, LineChart, AreaChart, and HorizontalBarChart keep their original required args first: labels, series, then optional variant.",
+      "- ComboChart takes labels and ComboSeries first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.",
       "- After the required args, you can optionally set theme, legend, animated, showGrid, xLabel, and yLabel.",
       "- RadarChart takes labels and series first, then optional theme, legend, animated, and showGrid.",
       "- Keep every Series values array the same length as labels.",
+      "- Use ComboSeries with type=bar for columns and type=line for overlays like targets or trends.",
       "- Use animated=true only when the user explicitly asks for animation or motion.",
     ],
   },
   {
     name: "Charts (1D)",
-    components: ["PieChart", "RadialChart", "SingleStackedBarChart", "Slice"],
+    components: [
+      "PieChart",
+      "RadialChart",
+      "SingleStackedBarChart",
+      "TreemapChart",
+      "Slice",
+      "TreemapItem",
+    ],
     notes: [
       '- PieChart takes slices first, then optional variant, theme, legend, animated, and format. Use format="percentage" for part-to-whole percentages.',
       "- RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.",
       "- SingleStackedBarChart takes slices first, then optional theme, legend, and animated.",
+      "- TreemapChart takes items first, then optional theme, legend, animated, and format. Use it when you need many categories shown as proportional rectangles.",
     ],
   },
   {
     name: "Charts (Scatter)",
-    components: ["ScatterChart", "ScatterSeries", "Point"],
+    components: [
+      "ScatterChart",
+      "ScatterSeries",
+      "Point",
+      "BubbleChart",
+      "BubbleSeries",
+      "BubblePoint",
+    ],
     notes: [
       "- ScatterChart takes datasets first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.",
       "- Use Point(x, y, z?) and include z only when point size should encode a third metric.",
+      "- Use BubbleChart when a third numeric metric should control bubble size. BubbleChart takes datasets first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.",
+      "- BubbleSeries uses BubblePoint(x, y, z), where z is required and controls bubble size.",
     ],
   },
   {
@@ -203,7 +231,39 @@ share1 = Slice("Alpha", 42)
 share2 = Slice("Beta", 33)
 share3 = Slice("Gamma", 25)`,
 
-  `Example 4 — Form with validation:
+  `Example 4 — Bubble chart:
+root = Stack([title, chart])
+title = TextContent("Campaign Performance", "large-heavy")
+chart = BubbleChart([north, south], "spectrum", true, false, true, "Spend ($K)", "Pipeline ($K)")
+north = BubbleSeries("North", [n1, n2, n3])
+south = BubbleSeries("South", [s1, s2, s3])
+n1 = BubblePoint(25, 180, 40)
+n2 = BubblePoint(40, 240, 65)
+n3 = BubblePoint(55, 330, 90)
+s1 = BubblePoint(20, 150, 35)
+s2 = BubblePoint(35, 220, 55)
+s3 = BubblePoint(50, 295, 80)`,
+
+  `Example 5 — Combo chart:
+root = Stack([title, chart])
+title = TextContent("Revenue vs Target", "large-heavy")
+chart = ComboChart(labels, [revenue, target], "orchid", true, false, true, "Month", "Revenue ($K)")
+labels = ["Jan", "Feb", "Mar", "Apr"]
+revenue = ComboSeries("Revenue", [120, 145, 168, 190], "bar")
+target = ComboSeries("Target", [110, 140, 160, 185], "line")`,
+
+  `Example 6 — Treemap chart:
+root = Stack([title, chart])
+title = TextContent("Portfolio Allocation", "large-heavy")
+chart = TreemapChart(items, "vivid", true, false, "percentage")
+items = [asset1, asset2, asset3, asset4, asset5]
+asset1 = TreemapItem("Equities", 42)
+asset2 = TreemapItem("Bonds", 24)
+asset3 = TreemapItem("Real Estate", 16)
+asset4 = TreemapItem("Cash", 10)
+asset5 = TreemapItem("Alternatives", 8)`,
+
+  `Example 7 — Form with validation:
 root = Stack([title, form])
 title = TextContent("Contact Us", "large-heavy")
 form = Form("contact", btns, [nameField, emailField, countryField, msgField])
@@ -214,7 +274,7 @@ msgField = FormControl("Message", TextArea("message", "Tell us more...", 4, { re
 countryOpts = [SelectItem("us", "United States"), SelectItem("uk", "United Kingdom"), SelectItem("de", "Germany")]
 btns = Buttons([Button("Submit", { type: "continue_conversation" }, "primary"), Button("Cancel", { type: "continue_conversation" }, "secondary")])`,
 
-  `Example 5 — Tabs with mixed content:
+  `Example 8 — Tabs with mixed content:
 root = Stack([title, tabs])
 title = TextContent("React vs Vue", "large-heavy")
 tabs = Tabs([tabReact, tabVue])
@@ -236,6 +296,12 @@ export const openuiAdditionalRules: string[] = [
   'Use format="percentage" for PieChart and RadialChart when the user asks for shares, composition, or percentages.',
   "If you set a later optional chart argument, use undefined placeholders to skip earlier optional args you do not need.",
   "For BarChart, LineChart, AreaChart, and HorizontalBarChart, every Series values array must match the labels length exactly.",
+  "Use BubbleChart when x and y should position points and a third numeric metric should control bubble size.",
+  "BubbleChart datasets must use BubbleSeries, and each BubblePoint must include x, y, and z.",
+  "Use ComboChart when you need bars and lines in the same chart, such as actuals vs target or totals vs trend.",
+  "ComboChart datasets must use ComboSeries, and each ComboSeries must set type to bar or line.",
+  "Use TreemapChart when you need to compare many categories as area-sized rectangles instead of slices or bars.",
+  "TreemapChart items must use TreemapItem(category, value).",
 ];
 
 export const openuiPromptOptions: PromptOptions = {
@@ -269,16 +335,23 @@ export const openuiLibrary = createLibrary({
     AreaChartCondensed,
     RadarChart,
     HorizontalBarChart,
+    ComboChart,
     Series,
+    ComboSeries,
     // Charts (1D)
     PieChart,
     RadialChart,
     SingleStackedBarChart,
     Slice,
+    TreemapChart,
+    TreemapItem,
     // Charts (Scatter)
     ScatterChart,
     ScatterSeries,
     Point,
+    BubbleChart,
+    BubbleSeries,
+    BubblePoint,
 
     // Forms
     Form,

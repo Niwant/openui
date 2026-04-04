@@ -14,6 +14,8 @@ import { TextContent } from "./TextContent";
 import {
   AreaChartCondensed,
   BarChartCondensed,
+  BubbleChart,
+  ComboChart,
   HorizontalBarChart,
   LineChartCondensed,
   PieChart,
@@ -21,6 +23,7 @@ import {
   RadialChart,
   ScatterChart,
   SingleStackedBarChart,
+  TreemapChart,
 } from "./Charts";
 
 import { Buttons } from "./Buttons";
@@ -46,9 +49,12 @@ export const SectionContentChildUnion = z.union([
   Separator.ref,
   HorizontalBarChart.ref,
   RadarChart.ref,
+  BubbleChart.ref,
+  ComboChart.ref,
   PieChart.ref,
   RadialChart.ref,
   SingleStackedBarChart.ref,
+  TreemapChart.ref,
   ScatterChart.ref,
   AreaChartCondensed.ref,
   BarChartCondensed.ref,

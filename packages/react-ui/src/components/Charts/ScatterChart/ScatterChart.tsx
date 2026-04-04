@@ -1,6 +1,6 @@
 import clsx from "clsx";
 import React, { useEffect, useId, useMemo, useRef, useState } from "react";
-import { Cell, ScatterChart as RechartsScatterChart, Scatter, XAxis, YAxis } from "recharts";
+import { Cell, ScatterChart as RechartsScatterChart, Scatter, XAxis, YAxis, ZAxis } from "recharts";
 import { usePrintContext } from "../../../context/PrintContext";
 import { ChartConfig, ChartContainer, ChartTooltip } from "../Charts";
 import { SideBarChartData, SideBarTooltipProvider } from "../context/SideBarTooltipContext";
@@ -29,6 +29,8 @@ export interface ScatterChartProps {
   data: ScatterChartData;
   xAxisDataKey?: string;
   yAxisDataKey?: string;
+  zAxisDataKey?: string;
+  zAxisRange?: [number, number];
   theme?: PaletteName;
   customPalette?: string[];
   grid?: boolean;
@@ -39,7 +41,7 @@ export interface ScatterChartProps {
   className?: string;
   height?: number | string;
   width?: number | string;
-  shape?: "circle" | "square";
+  shape?: "circle" | "square" | "bubble";
 }
 
 const DEFAULT_CHART_HEIGHT = 296;
@@ -49,6 +51,8 @@ export const ScatterChart = ({
   data,
   xAxisDataKey = "x",
   yAxisDataKey = "y",
+  zAxisDataKey,
+  zAxisRange = [80, 640],
   theme = "ocean",
   customPalette,
   grid = true,
@@ -83,6 +87,14 @@ export const ScatterChart = ({
   }, [data, datasets, colors]);
 
   const { yAxisWidth, setLabelWidth } = useYAxisLabelWidth(transformedData, [yAxisDataKey]);
+
+  const hasZValues = useMemo(() => {
+    if (!zAxisDataKey) {
+      return false;
+    }
+
+    return transformedData.some((point) => typeof point[zAxisDataKey] === "number");
+  }, [transformedData, zAxisDataKey]);
 
   const chartConfig: ChartConfig = useMemo(() => {
     return get2dChartConfig(
@@ -197,6 +209,9 @@ export const ScatterChart = ({
         name: dataset.name,
         x: dataset.data.map((p) => p[xAxisDataKey] as number),
         y: dataset.data.map((p) => p[yAxisDataKey] as number),
+        ...(hasZValues && zAxisDataKey
+          ? { z: dataset.data.map((p) => p[zAxisDataKey] as number | undefined) }
+          : {}),
       })),
   });
 
@@ -367,6 +382,10 @@ export const ScatterChart = ({
                     domain={yDomain}
                     hide
                   />
+
+                  {hasZValues && zAxisDataKey && (
+                    <ZAxis dataKey={zAxisDataKey} range={zAxisRange} />
+                  )}
 
                   <ChartTooltip
                     content={

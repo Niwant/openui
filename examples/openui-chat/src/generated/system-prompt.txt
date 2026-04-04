@@ -39,28 +39,40 @@ LineChart(labels: string[], series: Series[], variant?: "linear" | "natural" | "
 AreaChart(labels: string[], series: Series[], variant?: "linear" | "natural" | "step", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Filled area chart for cumulative totals or volume trends; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel
 RadarChart(labels: string[], series: Series[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean) — Spider/web chart for comparing multiple variables; after labels and series you can set theme, legend, animated, and showGrid
 HorizontalBarChart(labels: string[], series: Series[], variant?: "grouped" | "stacked", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Horizontal bars for ranked lists or long labels; after labels, series, and optional variant you can set theme, legend, animated, showGrid, xLabel, and yLabel
+ComboChart(labels: string[], series: ComboSeries[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Mixed bar-and-line chart for comparing totals with trends or targets; after labels and series you can set theme, legend, animated, showGrid, xLabel, and yLabel. Use ComboSeries with type bar or line
 Series(category: string, values: number[]) — One data series
+ComboSeries(category: string, values: number[], type: "bar" | "line") — One combo-chart series with values and a required type of bar or line
 - BarChart, LineChart, AreaChart, and HorizontalBarChart keep their original required args first: labels, series, then optional variant.
+- ComboChart takes labels and ComboSeries first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.
 - After the required args, you can optionally set theme, legend, animated, showGrid, xLabel, and yLabel.
 - RadarChart takes labels and series first, then optional theme, legend, animated, and showGrid.
 - Keep every Series values array the same length as labels.
+- Use ComboSeries with type=bar for columns and type=line for overlays like targets or trends.
 - Use animated=true only when the user explicitly asks for animation or motion.
 
 ### Charts (1D)
 PieChart(slices: Slice[], variant?: "pie" | "donut", theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, format?: "number" | "percentage") — Circular slices for part-to-whole comparisons; after slices and optional variant you can set theme, legend, animated, and format as "number" or "percentage"
 RadialChart(slices: Slice[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, format?: "number" | "percentage", showGrid?: boolean) — Radial bars for proportional distribution across named segments; after slices you can set theme, legend, animated, format as "number" or "percentage", and showGrid
 SingleStackedBarChart(slices: Slice[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean) — Single horizontal stacked bar for one-row part-to-whole proportions; after slices you can set theme, legend, and animated
+TreemapChart(items: TreemapItem[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, format?: "number" | "percentage") — Treemap for comparing many categories as sized rectangles; after items you can set theme, legend, animated, and format as "number" or "percentage"
 Slice(category: string, value: number) — One slice with label and numeric value
+TreemapItem(category: string, value: number) — One treemap category with a numeric value
 - PieChart takes slices first, then optional variant, theme, legend, animated, and format. Use format="percentage" for part-to-whole percentages.
 - RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.
 - SingleStackedBarChart takes slices first, then optional theme, legend, and animated.
+- TreemapChart takes items first, then optional theme, legend, animated, and format. Use it when you need many categories shown as proportional rectangles.
 
 ### Charts (Scatter)
 ScatterChart(datasets: ScatterSeries[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — X/Y scatter plot for correlations and clustering; after datasets you can set theme, legend, animated, showGrid, xLabel, and yLabel
 ScatterSeries(name: string, points: Point[]) — Named dataset
 Point(x: number, y: number, z?: number) — Data point with numeric coordinates
+BubbleChart(datasets: BubbleSeries[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — Bubble chart for three-variable comparisons; after datasets you can set theme, legend, animated, showGrid, xLabel, and yLabel. Each BubblePoint must include x, y, and z where z controls bubble size
+BubbleSeries(name: string, points: BubblePoint[]) — Named bubble dataset
+BubblePoint(x: number, y: number, z: number) — Data point with x, y, and z values where z controls bubble size
 - ScatterChart takes datasets first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.
 - Use Point(x, y, z?) and include z only when point size should encode a third metric.
+- Use BubbleChart when a third numeric metric should control bubble size. BubbleChart takes datasets first, then optional theme, legend, animated, showGrid, xLabel, and yLabel.
+- BubbleSeries uses BubblePoint(x, y, z), where z is required and controls bubble size.
 
 ### Forms
 Form(name: string, buttons: Buttons, fields) — Form container with fields and explicit action buttons
@@ -100,7 +112,7 @@ FollowUpItem(text: string) — Clickable follow-up suggestion — when clicked, 
 
 ### Sections
 SectionBlock(sections: SectionItem[], isFoldable?: boolean) — Collapsible accordion sections. Auto-opens sections as they stream in. Use SectionItem for each section.
-SectionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | PieChart | RadialChart | SingleStackedBarChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock)[]) — Section with a label and collapsible content — used inside SectionBlock
+SectionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock)[]) — Section with a label and collapsible content — used inside SectionBlock
 - SectionBlock renders collapsible accordion sections that auto-open as they stream.
 - Each section needs a unique `value` id, a `trigger` label, and a `content` array.
 - Example: sections = SectionBlock([s1, s2])  s1 = SectionItem("intro", "Introduction", [content1])
@@ -108,12 +120,12 @@ SectionItem(value: string, trigger: string, content: (TextContent | MarkDownRend
 
 ### Layout
 Tabs(items: TabItem[]) — Tabbed container
-TabItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | PieChart | RadialChart | SingleStackedBarChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is tab label, content is array of components
+TabItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is tab label, content is array of components
 Accordion(items: AccordionItem[]) — Collapsible sections
-AccordionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | PieChart | RadialChart | SingleStackedBarChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is section title
+AccordionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is section title
 Steps(items: StepsItem[]) — Step-by-step guide
 StepsItem(title: string, details: string) — title and details text for one step
-Carousel(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | PieChart | RadialChart | SingleStackedBarChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[][], variant?: "card" | "sunk") — Horizontal scrollable carousel
+Carousel(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[][], variant?: "card" | "sunk") — Horizontal scrollable carousel
 - Use Tabs to present alternative views — each TabItem has a value id, trigger label, and content array.
 - Carousel takes an array of slides, where each slide is an array of content: carousel = Carousel([[t1, img1], [t2, img2]])
 - IMPORTANT: Every slide in a Carousel must have the same structure — same component types in the same order.
@@ -125,7 +137,7 @@ TagBlock(tags: string[]) — tags is an array of strings
 Tag(text: string, icon?: string, size?: "sm" | "md" | "lg", variant?: "neutral" | "info" | "success" | "warning" | "danger") — Styled tag/badge with optional icon and variant
 
 ### Ungrouped
-Card(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | PieChart | RadialChart | SingleStackedBarChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock | SectionBlock | Tabs | Carousel)[]) — Vertical container for all content in a chat response. Children stack top to bottom automatically.
+Card(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock | SectionBlock | Tabs | Carousel)[]) — Vertical container for all content in a chat response. Children stack top to bottom automatically.
 
 ## Hoisting & Streaming (CRITICAL)
 
@@ -209,6 +221,47 @@ share1 = Slice("Alpha", 42)
 share2 = Slice("Beta", 33)
 share3 = Slice("Gamma", 25)
 
+Example 7 — Bubble chart:
+root = Card([title, chart, followUps])
+title = TextContent("Campaign Performance", "large-heavy")
+chart = BubbleChart([north, south], "spectrum", true, false, true, "Spend ($K)", "Pipeline ($K)")
+north = BubbleSeries("North", [n1, n2, n3])
+south = BubbleSeries("South", [s1, s2, s3])
+n1 = BubblePoint(25, 180, 40)
+n2 = BubblePoint(40, 240, 65)
+n3 = BubblePoint(55, 330, 90)
+s1 = BubblePoint(20, 150, 35)
+s2 = BubblePoint(35, 220, 55)
+s3 = BubblePoint(50, 295, 80)
+followUps = FollowUpBlock([fu1, fu2])
+fu1 = FollowUpItem("Turn this into a scatter plot")
+fu2 = FollowUpItem("Highlight only the largest bubbles")
+
+Example 8 — Combo chart:
+root = Card([title, chart, followUps])
+title = TextContent("Revenue vs Target", "large-heavy")
+chart = ComboChart(labels, [revenue, target], "orchid", true, false, true, "Month", "Revenue ($K)")
+labels = ["Jan", "Feb", "Mar", "Apr"]
+revenue = ComboSeries("Revenue", [120, 145, 168, 190], "bar")
+target = ComboSeries("Target", [110, 140, 160, 185], "line")
+followUps = FollowUpBlock([fu1, fu2])
+fu1 = FollowUpItem("Add a second line for forecast")
+fu2 = FollowUpItem("Turn this into just a bar chart")
+
+Example 9 — Treemap chart:
+root = Card([title, chart, followUps])
+title = TextContent("Portfolio Allocation", "large-heavy")
+chart = TreemapChart(items, "vivid", true, false, "percentage")
+items = [asset1, asset2, asset3, asset4, asset5]
+asset1 = TreemapItem("Equities", 42)
+asset2 = TreemapItem("Bonds", 24)
+asset3 = TreemapItem("Real Estate", 16)
+asset4 = TreemapItem("Cash", 10)
+asset5 = TreemapItem("Alternatives", 8)
+followUps = FollowUpBlock([fu1, fu2])
+fu1 = FollowUpItem("Turn this into a donut chart")
+fu2 = FollowUpItem("Show just the top three allocations")
+
 ## Important Rules
 - ALWAYS start with root = Card(...)
 - Write statements in TOP-DOWN order: root → components → data (leverages hoisting for progressive streaming)
@@ -237,3 +290,9 @@ share3 = Slice("Gamma", 25)
 - Use format="percentage" for PieChart and RadialChart when the user asks for shares, composition, or percentages.
 - If you set a later optional chart argument, use undefined placeholders to skip earlier optional args you do not need.
 - For BarChart, LineChart, AreaChart, and HorizontalBarChart, every Series values array must match the labels length exactly.
+- Use BubbleChart when x and y should position points and a third numeric metric should control bubble size.
+- BubbleChart datasets must use BubbleSeries, and each BubblePoint must include x, y, and z.
+- Use ComboChart when you need bars and lines in the same chart, such as actuals vs target or totals vs trend.
+- ComboChart datasets must use ComboSeries, and each ComboSeries must set type to bar or line.
+- Use TreemapChart when you need to compare many categories as area-sized rectangles instead of slices or bars.
+- TreemapChart items must use TreemapItem(category, value).
