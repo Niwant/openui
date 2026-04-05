@@ -1,13 +1,17 @@
 import { z } from "zod";
 
 const chartThemes = ["ocean", "orchid", "emerald", "spectrum", "sunset", "vivid"] as const;
+const animationPresets = ["default", "gentle", "fast"] as const;
 
 export const chartThemeSchema = z.enum(chartThemes);
+export const animationPresetSchema = z.enum(animationPresets);
 
 export const baseChartAppearanceShape = {
   theme: chartThemeSchema.optional(),
   legend: z.boolean().optional(),
   animated: z.boolean().optional(),
+  animationDuration: z.number().min(100).max(5000).optional(),
+  animationPreset: animationPresetSchema.optional(),
 };
 
 export const baseChartAppearanceSchema = z.object(baseChartAppearanceShape);
@@ -47,10 +51,14 @@ type ProportionalChartAppearance = z.infer<typeof proportionalChartAppearanceSch
 type RadialChartAppearance = z.infer<typeof radialChartAppearanceSchema>;
 
 export function getBaseChartProps(props: BaseChartAppearance) {
+  const duration =
+    props.animationDuration ??
+    (props.animationPreset === "gentle" ? 2000 : props.animationPreset === "fast" ? 500 : 1000);
   return {
     theme: props.theme,
     legend: props.legend,
     isAnimationActive: props.animated ?? false,
+    animationDuration: duration,
   };
 }
 

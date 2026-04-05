@@ -408,6 +408,21 @@ export const openuiChatAdditionalRules: string[] = [
   "TreemapChart items must use TreemapItem(category, value).",
   "Use FunnelChart when visualizing stages in a process like conversions, pipelines, or drop-off rates.",
   "FunnelChart items must use FunnelItem(category, value).",
+  // Chart selection guidance
+  "Use BarChart for comparing discrete categories or showing rankings.",
+  "Use LineChart for trends over time or continuous data.",
+  "Use AreaChart when you want to show cumulative totals or emphasize volume under the line.",
+  "Use HorizontalBarChart for long category labels or when ranking is clearer horizontally.",
+  "Use PieChart for showing composition of a whole (5-8 slices maximum).",
+  "Use RadialChart for cyclical data or gauge-style visualizations.",
+  "Use ScatterChart for correlation analysis between two numeric variables.",
+  "Use BubbleChart when a third variable should also be visualized as point size.",
+  "Use ComboChart when combining different data types in one view (e.g., actuals vs targets).",
+  "Use TreemapChart when comparing many categories where area represents value.",
+  "Use FunnelChart for conversion funnels, sales pipelines, or drop-off analysis.",
+  "Use RadarChart for comparing multiple metrics across entities (e.g., skill profiles).",
+  "Use SingleStackedBarChart for progress toward a goal or target.",
+  "Use ScatterChart for finding patterns, clusters, or outliers in data.",
 ];
 
 export const openuiChatPromptOptions: PromptOptions = {
