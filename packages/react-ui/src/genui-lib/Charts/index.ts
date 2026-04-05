@@ -1,6 +1,7 @@
 // Virtual components
 export { BubblePoint, BubblePointSchema } from "./BubblePoint";
 export { BubbleSeries, BubbleSeriesSchema } from "./BubbleSeries";
+export { FunnelItem, FunnelItemSchema } from "./FunnelItem";
 export { Point, PointSchema } from "./Point";
 export { ScatterSeries, ScatterSeriesSchema } from "./ScatterSeries";
 export { Series, SeriesSchema } from "./Series";
@@ -25,5 +26,6 @@ export { AreaChartCondensed, AreaChartCondensedSchema } from "./AreaChartCondens
 export { BarChartCondensed, BarChartCondensedSchema } from "./BarChartCondensed";
 export { ComboChart, ComboChartSchema } from "./ComboChart";
 export { ComboSeries, ComboSeriesSchema } from "./ComboSeries";
+export { FunnelChart, FunnelChartSchema } from "./FunnelChart";
 export { LineChartCondensed, LineChartCondensedSchema } from "./LineChartCondensed";
 export { TreemapChart, TreemapChartSchema } from "./TreemapChart";

@@ -61,6 +61,7 @@ TreemapItem(category: string, value: number) — One treemap category with a num
 - RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.
 - SingleStackedBarChart takes slices first, then optional theme, legend, and animated.
 - TreemapChart takes items first, then optional theme, legend, animated, and format. Use it when you need many categories shown as proportional rectangles.
+- FunnelChart takes items first, then optional theme, legend, animated, and format. Use it for conversion funnels, pipeline stages, or drop-off analysis.
 
 ### Charts (Scatter)
 ScatterChart(datasets: ScatterSeries[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, showGrid?: boolean, xLabel?: string, yLabel?: string) — X/Y scatter plot for correlations and clustering; after datasets you can set theme, legend, animated, showGrid, xLabel, and yLabel
@@ -112,7 +113,7 @@ FollowUpItem(text: string) — Clickable follow-up suggestion — when clicked, 
 
 ### Sections
 SectionBlock(sections: SectionItem[], isFoldable?: boolean) — Collapsible accordion sections. Auto-opens sections as they stream in. Use SectionItem for each section.
-SectionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock)[]) — Section with a label and collapsible content — used inside SectionBlock
+SectionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | FunnelChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock)[]) — Section with a label and collapsible content — used inside SectionBlock
 - SectionBlock renders collapsible accordion sections that auto-open as they stream.
 - Each section needs a unique `value` id, a `trigger` label, and a `content` array.
 - Example: sections = SectionBlock([s1, s2])  s1 = SectionItem("intro", "Introduction", [content1])
@@ -120,12 +121,12 @@ SectionItem(value: string, trigger: string, content: (TextContent | MarkDownRend
 
 ### Layout
 Tabs(items: TabItem[]) — Tabbed container
-TabItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is tab label, content is array of components
+TabItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | FunnelChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is tab label, content is array of components
 Accordion(items: AccordionItem[]) — Collapsible sections
-AccordionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is section title
+AccordionItem(value: string, trigger: string, content: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | FunnelChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[]) — value is unique id, trigger is section title
 Steps(items: StepsItem[]) — Step-by-step guide
 StepsItem(title: string, details: string) — title and details text for one step
-Carousel(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[][], variant?: "card" | "sunk") — Horizontal scrollable carousel
+Carousel(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | FunnelChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps)[][], variant?: "card" | "sunk") — Horizontal scrollable carousel
 - Use Tabs to present alternative views — each TabItem has a value id, trigger label, and content array.
 - Carousel takes an array of slides, where each slide is an array of content: carousel = Carousel([[t1, img1], [t2, img2]])
 - IMPORTANT: Every slide in a Carousel must have the same structure — same component types in the same order.
@@ -137,7 +138,9 @@ TagBlock(tags: string[]) — tags is an array of strings
 Tag(text: string, icon?: string, size?: "sm" | "md" | "lg", variant?: "neutral" | "info" | "success" | "warning" | "danger") — Styled tag/badge with optional icon and variant
 
 ### Ungrouped
-Card(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock | SectionBlock | Tabs | Carousel)[]) — Vertical container for all content in a chat response. Children stack top to bottom automatically.
+Card(children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | BubbleChart | ComboChart | PieChart | RadialChart | SingleStackedBarChart | TreemapChart | FunnelChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | Steps | ListBlock | FollowUpBlock | SectionBlock | Tabs | Carousel)[]) — Vertical container for all content in a chat response. Children stack top to bottom automatically.
+FunnelChart(items: FunnelItem[], theme?: "ocean" | "orchid" | "emerald" | "spectrum" | "sunset" | "vivid", legend?: boolean, animated?: boolean, format?: "number" | "percentage") — Funnel chart for showing stages in a process like conversion or drop-off; after items you can set theme, legend, animated, and format as "number" or "percentage"
+FunnelItem(category: string, value: number) — One funnel stage with a label and numeric value
 
 ## Hoisting & Streaming (CRITICAL)
 
@@ -262,6 +265,19 @@ followUps = FollowUpBlock([fu1, fu2])
 fu1 = FollowUpItem("Turn this into a donut chart")
 fu2 = FollowUpItem("Show just the top three allocations")
 
+Example 10 — Funnel chart:
+root = Card([title, chart, followUps])
+title = TextContent("Sales Pipeline", "large-heavy")
+chart = FunnelChart(items, "ocean", true, false, "percentage")
+items = [stage1, stage2, stage3, stage4]
+stage1 = FunnelItem("Leads", 1200)
+stage2 = FunnelItem("Qualified", 480)
+stage3 = FunnelItem("Proposals", 220)
+stage4 = FunnelItem("Closed", 95)
+followUps = FollowUpBlock([fu1, fu2])
+fu1 = FollowUpItem("Where is the biggest drop-off?")
+fu2 = FollowUpItem("Show this as a bar chart instead")
+
 ## Important Rules
 - ALWAYS start with root = Card(...)
 - Write statements in TOP-DOWN order: root → components → data (leverages hoisting for progressive streaming)
@@ -296,3 +312,5 @@ fu2 = FollowUpItem("Show just the top three allocations")
 - ComboChart datasets must use ComboSeries, and each ComboSeries must set type to bar or line.
 - Use TreemapChart when you need to compare many categories as area-sized rectangles instead of slices or bars.
 - TreemapChart items must use TreemapItem(category, value).
+- Use FunnelChart when visualizing stages in a process like conversions, pipelines, or drop-off rates.
+- FunnelChart items must use FunnelItem(category, value).

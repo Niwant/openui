@@ -26,6 +26,8 @@ import {
   BubbleSeries,
   ComboChart,
   ComboSeries,
+  FunnelChart,
+  FunnelItem,
   HorizontalBarChart,
   LineChartCondensed,
   PieChart,
@@ -165,6 +167,7 @@ export const openuiChatComponentGroups: ComponentGroup[] = [
       "- RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.",
       "- SingleStackedBarChart takes slices first, then optional theme, legend, and animated.",
       "- TreemapChart takes items first, then optional theme, legend, animated, and format. Use it when you need many categories shown as proportional rectangles.",
+      "- FunnelChart takes items first, then optional theme, legend, animated, and format. Use it for conversion funnels, pipeline stages, or drop-off analysis.",
     ],
   },
   {
@@ -362,6 +365,19 @@ asset5 = TreemapItem("Alternatives", 8)
 followUps = FollowUpBlock([fu1, fu2])
 fu1 = FollowUpItem("Turn this into a donut chart")
 fu2 = FollowUpItem("Show just the top three allocations")`,
+
+  `Example 10 — Funnel chart:
+root = Card([title, chart, followUps])
+title = TextContent("Sales Pipeline", "large-heavy")
+chart = FunnelChart(items, "ocean", true, false, "percentage")
+items = [stage1, stage2, stage3, stage4]
+stage1 = FunnelItem("Leads", 1200)
+stage2 = FunnelItem("Qualified", 480)
+stage3 = FunnelItem("Proposals", 220)
+stage4 = FunnelItem("Closed", 95)
+followUps = FollowUpBlock([fu1, fu2])
+fu1 = FollowUpItem("Where is the biggest drop-off?")
+fu2 = FollowUpItem("Show this as a bar chart instead")`,
 ];
 
 export const openuiChatAdditionalRules: string[] = [
@@ -390,6 +406,8 @@ export const openuiChatAdditionalRules: string[] = [
   "ComboChart datasets must use ComboSeries, and each ComboSeries must set type to bar or line.",
   "Use TreemapChart when you need to compare many categories as area-sized rectangles instead of slices or bars.",
   "TreemapChart items must use TreemapItem(category, value).",
+  "Use FunnelChart when visualizing stages in a process like conversions, pipelines, or drop-off rates.",
+  "FunnelChart items must use FunnelItem(category, value).",
 ];
 
 export const openuiChatPromptOptions: PromptOptions = {
@@ -435,6 +453,8 @@ export const openuiChatLibrary = createLibrary({
     Slice,
     TreemapChart,
     TreemapItem,
+    FunnelChart,
+    FunnelItem,
     // Charts (Scatter)
     ScatterChart,
     ScatterSeries,

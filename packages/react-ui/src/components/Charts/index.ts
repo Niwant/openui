@@ -6,6 +6,7 @@ export * from "./BarChartCondensed";
 export { BarChartCondensed as BarChart } from "./BarChartCondensed";
 export * from "./BubbleChart";
 export * from "./ComboChart";
+export * from "./FunnelChart";
 export * from "./HorizontalBarChart";
 export { LineChart as ScrollableLineChart } from "./LineChart";
 export * from "./LineChartCondensed";

@@ -24,6 +24,8 @@ import {
   BubbleSeries,
   ComboChart,
   ComboSeries,
+  FunnelChart,
+  FunnelItem,
   HorizontalBarChart,
   LineChartCondensed,
   PieChart,
@@ -147,6 +149,7 @@ export const openuiComponentGroups: ComponentGroup[] = [
       "- RadialChart takes slices first, then optional theme, legend, animated, format, and showGrid.",
       "- SingleStackedBarChart takes slices first, then optional theme, legend, and animated.",
       "- TreemapChart takes items first, then optional theme, legend, animated, and format. Use it when you need many categories shown as proportional rectangles.",
+      "- FunnelChart takes items first, then optional theme, legend, animated, and format. Use it for conversion funnels, pipeline stages, or drop-off analysis.",
     ],
   },
   {
@@ -263,7 +266,17 @@ asset3 = TreemapItem("Real Estate", 16)
 asset4 = TreemapItem("Cash", 10)
 asset5 = TreemapItem("Alternatives", 8)`,
 
-  `Example 7 — Form with validation:
+  `Example 7 — Funnel chart:
+root = Stack([title, chart])
+title = TextContent("Sales Pipeline", "large-heavy")
+chart = FunnelChart(items, "ocean", true, false, "percentage")
+items = [stage1, stage2, stage3, stage4]
+stage1 = FunnelItem("Leads", 1200)
+stage2 = FunnelItem("Qualified", 480)
+stage3 = FunnelItem("Proposals", 220)
+stage4 = FunnelItem("Closed", 95)`,
+
+  `Example 8 — Form with validation:
 root = Stack([title, form])
 title = TextContent("Contact Us", "large-heavy")
 form = Form("contact", btns, [nameField, emailField, countryField, msgField])
@@ -274,7 +287,7 @@ msgField = FormControl("Message", TextArea("message", "Tell us more...", 4, { re
 countryOpts = [SelectItem("us", "United States"), SelectItem("uk", "United Kingdom"), SelectItem("de", "Germany")]
 btns = Buttons([Button("Submit", { type: "continue_conversation" }, "primary"), Button("Cancel", { type: "continue_conversation" }, "secondary")])`,
 
-  `Example 8 — Tabs with mixed content:
+  `Example 9 — Tabs with mixed content:
 root = Stack([title, tabs])
 title = TextContent("React vs Vue", "large-heavy")
 tabs = Tabs([tabReact, tabVue])
@@ -302,6 +315,8 @@ export const openuiAdditionalRules: string[] = [
   "ComboChart datasets must use ComboSeries, and each ComboSeries must set type to bar or line.",
   "Use TreemapChart when you need to compare many categories as area-sized rectangles instead of slices or bars.",
   "TreemapChart items must use TreemapItem(category, value).",
+  "Use FunnelChart when visualizing stages in a process like conversions, pipelines, or drop-off rates.",
+  "FunnelChart items must use FunnelItem(category, value).",
 ];
 
 export const openuiPromptOptions: PromptOptions = {
@@ -345,6 +360,8 @@ export const openuiLibrary = createLibrary({
     Slice,
     TreemapChart,
     TreemapItem,
+    FunnelChart,
+    FunnelItem,
     // Charts (Scatter)
     ScatterChart,
     ScatterSeries,
